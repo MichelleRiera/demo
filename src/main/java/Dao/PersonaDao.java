@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import java.util.List;
@@ -34,10 +35,22 @@ public class PersonaDao implements Serializable{
 	}
 
 	
+	/*public void delete(String cedula) {
+	    Persona p = em.find(Persona.class, cedula);
+	    em.remove(p);
+	}*/
 	public void delete(String cedula) {
-		Persona p = em.find(Persona.class, cedula);
-		em.remove(p);
+	    Query query = em.createQuery("DELETE FROM Persona p WHERE p.cedula = :cedula");
+	    query.setParameter("cedula", cedula);
+	    int rowsAffected = query.executeUpdate();
+	    
+	    if (rowsAffected == 0) {
+	        throw new EntityNotFoundException("La persona con cédula " + cedula + " no existe.");
+	    }
 	}
+
+
+
 	
 	public List<Persona> getAll(){
 		String jpql = "SELECT p FROM Persona p";

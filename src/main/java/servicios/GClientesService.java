@@ -9,6 +9,7 @@ import java.util.List;
 import Dao.PersonaDao;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -122,6 +123,8 @@ public class GClientesService {
 	    public List<Persona> listarPersonas() {
 	        return clientes.listarPersonas();
 	    }
+	    
+	   
 
 	    @POST
 	    @Path("registrar")
@@ -138,6 +141,40 @@ public class GClientesService {
 	            return Response.status(Response.Status.OK).entity(error).build();
 	        }
 	    }
+	    
+	    @GET
+	    @Path("all")
+	    @Produces("application/json")
+	    public Response getClientes() {
+	        List<Persona> listado = clientes.listarPersonas();
+	        
+	        return Response.status(Response.Status.OK).entity(listado).build();
+	    }
+	    
+	    @DELETE
+	    @Path("eliminar")
+	    @Consumes("application/json")
+	    @Produces("application/json")
+	    public Response eliminarPersona(Persona persona) {
+	        try {
+	            clientes.delete(persona.getCedula());
+	            Error respuesta = new Error();
+	            respuesta.setCodigo(1);
+	            respuesta.setMensaje("Persona eliminada correctamente.");
+	            return Response.status(Response.Status.OK).entity(respuesta).build();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            Error respuesta = new Error();
+	            respuesta.setCodigo(99);
+	            respuesta.setMensaje("Error al eliminar: " + e.getMessage());
+	            return Response.status(Response.Status.BAD_REQUEST).entity(respuesta).build();
+	        }
+	    }
+
+
+
+
+
 	}
 	
 
